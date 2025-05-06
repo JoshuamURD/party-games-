@@ -17,17 +17,14 @@
                     Do you want to know the question, or is the answer more important?
                 </p>
             </div>
-
-            <div class="flex flex-col items-center justify-center">
-                <PlayerList />
+            <div>
+                <button class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors mx-auto block">Start Game</button>
             </div>
+
         </div>
     </div>
 </template>
 
-<script setup lang="ts">
-import PlayerList from '../components/Playerlist.vue'
-</script>
 
 <style scoped>
 @keyframes pulse {

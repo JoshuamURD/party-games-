@@ -2,12 +2,15 @@
     <div class="bg-slate-700 p-6 rounded-lg shadow-lg">
         <h2 class="text-xl font-semibold text-white mb-4">Players</h2>
         <div class="space-y-4">
-            <ul v-if="players.length > 0" class="space-y-2">
-                <li v-for="player in players" 
+            <ul v-if="allPlayers.length > 0" class="space-y-2">
+                <li v-for="player in allPlayers" 
                     :key="player.id" 
                     class="flex items-center justify-between bg-slate-600 p-3 rounded-md text-white"
                 >
-                    <span>{{ player.name }}</span>
+                    <div class="flex items-center gap-2">
+                        <span>{{ player.name }}</span>
+                        <span v-if="isPendingPlayer(player.id)" class="text-xs bg-yellow-500 text-white px-2 py-0.5 rounded">Pending</span>
+                    </div>
                     <button 
                         @click="removePlayer(player.id)"
                         class="text-red-400 hover:text-red-300 transition-colors"
@@ -43,6 +46,14 @@
                     Maximum number of players reached ({{ maxPlayers }})
                 </p>
             </form>
+
+            <button 
+                v-if="pendingPlayers.length > 0"
+                @click="submitPlayers"
+                class="w-full mt-4 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+            >
+                Submit Players ({{ pendingPlayers.length }})
+            </button>
         </div>
     </div>
 </template>
@@ -65,47 +76,70 @@ const emit = defineEmits<{
 
 const playerName = ref('');
 const players = ref<Player[]>([]);
+const pendingPlayers = ref<Player[]>([]);
 const error = ref('');
 
-const isMaxPlayersReached = computed(() => {
-    return players.value.length >= (props.maxPlayers || 6);
+const allPlayers = computed(() => {
+    return [...players.value, ...pendingPlayers.value];
 });
 
-const addPlayer = async () => {
+const isPendingPlayer = (id: number) => {
+    return pendingPlayers.value.some(player => player.id === id);
+};
+
+const isMaxPlayersReached = computed(() => {
+    return allPlayers.value.length >= (props.maxPlayers || 6);
+});
+
+const addPlayer = () => {
     if (!playerName.value.trim()) return;
     if (isMaxPlayersReached.value) {
         error.value = `Maximum number of players (${props.maxPlayers || 6}) reached`;
         return;
     }
 
+    const newPlayer = {
+        id: Date.now(),
+        name: playerName.value.trim()
+    };
+
+    pendingPlayers.value.push(newPlayer);
+    playerName.value = '';
+    error.value = '';
+};
+
+const submitPlayers = async () => {
     try {
         const response = await fetch('/api/players', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ name: playerName.value.trim() }),
+            body: JSON.stringify({ players: pendingPlayers.value }),
         });
 
         if (!response.ok) {
-            throw new Error('Failed to add player');
+            throw new Error('Failed to submit players');
         }
 
-        const newPlayer = {
-            id: Date.now(),
-            name: playerName.value.trim()
-        };
-
-        players.value.push(newPlayer);
+        players.value = [...players.value, ...pendingPlayers.value];
+        pendingPlayers.value = [];
         emit('update:players', players.value);
-        playerName.value = '';
         error.value = '';
     } catch (err) {
-        error.value = 'Failed to add player. Please try again.';
+        error.value = 'Failed to submit players. Please try again.';
     }
 };
 
 const removePlayer = async (id: number) => {
+    // First check if it's a pending player
+    const pendingIndex = pendingPlayers.value.findIndex(player => player.id === id);
+    if (pendingIndex !== -1) {
+        pendingPlayers.value.splice(pendingIndex, 1);
+        return;
+    }
+
+    // If not pending, it's a confirmed player that needs to be removed from the API
     try {
         const response = await fetch(`/api/players/${id}`, {
             method: 'DELETE',

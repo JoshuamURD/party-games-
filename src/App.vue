@@ -17,7 +17,7 @@ watch(selectedMode, (newMode) => {
 <template>
   <header class="bg-gray-800 text-white p-4 w-full">
     <RouterLink to="/" class="hover:underline">
-      <h1 class="text-4xl font-bold">Party Game</h1>
+      <h1 class="text-4xl font-bold">Par T Gamez</h1>
       <p class="text-lg mb-2">Games for the whole family <i>(not really)</i></p>
     </RouterLink>
     <select v-model="selectedMode" class="bg-gray-700 text-white p-2 rounded-md">
