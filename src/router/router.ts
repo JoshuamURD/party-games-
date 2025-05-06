@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Questions from '../views/Questions.vue'
 import Paranoia from '../views/Paranoia.vue'
 import Home from '../views/Home.vue'
+import GameRoom from '../views/GameRoom.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -20,6 +21,11 @@ const router = createRouter({
       path: '/paranoia',
       name: 'paranoia',
       component: Paranoia,
+    },
+    {
+      path: '/paranoia/:gameId',
+      name: 'game-room',
+      component: GameRoom,
     },
   ],
 })

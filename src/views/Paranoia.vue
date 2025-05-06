@@ -18,13 +18,27 @@
                 </p>
             </div>
             <div>
-                <button class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors mx-auto block">Start Game</button>
+                <button @click="startGame" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors mx-auto block">Start Game</button>
             </div>
-
         </div>
     </div>
 </template>
 
+<script setup lang="ts">
+import { useRouter } from 'vue-router';
+import { v4 as uuidv4 } from 'uuid';
+
+const router = useRouter();
+
+const startGame = async () => {
+    const gameId = uuidv4();
+    const { status, webSocket, id } = await fetch(`/paranoia/create/${gameId}`).then(res => res.json());
+    console.log(status, webSocket);
+    if (status === 101) {
+        router.push(`/paranoia/${id}`);
+    }
+};
+</script>
 
 <style scoped>
 @keyframes pulse {
