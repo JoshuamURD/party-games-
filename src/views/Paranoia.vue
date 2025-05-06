@@ -1,16 +1,44 @@
 <template>
-    <div class="bg-slate-600 text-white p-4 w-full min-h-screen overflow-y-hidden">
-        <h1 class="text-4xl font-bold">Paranoia</h1>
-        <p class="text-lg mb-2">Do you want to know the question or is the answer more important?</p>
-        <div class="flex flex-col items-center justify-center h-screen">
-            <div class="bg-slate-700 p-4 rounded-md">
-                <h2 class="text-2xl font-bold">Player 1</h2>
+    <div class="bg-gradient-to-b from-slate-800 to-slate-900 text-white p-8 w-full min-h-screen overflow-y-hidden">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-5xl text-center font-bold mb-6 tracking-wider text-red-500">PARANOIA</h1>
+            
+            <div class="bg-slate-700/50 p-6 rounded-lg shadow-lg mb-8 backdrop-blur-sm border border-red-900/30">
+                <h2 class="text-2xl font-semibold mb-4 text-red-400">How to Play</h2>
+                <p class="text-lg mb-4 leading-relaxed">
+                    In this game of secrets and suspense, players take turns being the target of potentially embarrassing or revealing questions. 
+                    When it's your turn, another player will secretly send you a question and you must name someone in the group as the answer.
+                </p>
+                <p class="text-lg mb-4 leading-relaxed">
+                    The tension builds as a coin is flipped - if the flipper loses, the question is revealed to everyone. 
+                    But if they win, the question remains a mystery forever, leaving the named player in a state of... paranoia.
+                </p>
+                <p class="text-lg italic text-red-300">
+                    Do you want to know the question, or is the answer more important?
+                </p>
+            </div>
+
+            <div class="flex flex-col items-center justify-center">
+                <PlayerList />
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-
+import PlayerList from '../components/Playerlist.vue'
 </script>
+
+<style scoped>
+@keyframes pulse {
+    0% { opacity: 0.8; }
+    50% { opacity: 1; }
+    100% { opacity: 0.8; }
+}
+
+h1 {
+    animation: pulse 3s infinite;
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+</style>
 
